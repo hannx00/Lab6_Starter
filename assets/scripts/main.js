@@ -5,7 +5,10 @@
 const recipes = [
   'https://introweb.tech/assets/json/ghostCookies.json',
   'https://introweb.tech/assets/json/birthdayCake.json',
-  'https://introweb.tech/assets/json/chocolateChip.json'
+  'https://introweb.tech/assets/json/chocolateChip.json',
+  'assets/recipes/blueberry.json',
+  'assets/recipes/padseeew.json',
+  'assets/recipes/smash.json'
 ];
 
 // Once all of the recipes that were specified above have been fetched, their
@@ -32,6 +35,17 @@ async function init() {
 
 async function fetchRecipes() {
   return new Promise((resolve, reject) => {
+    for (let i = 0; i < recipes.length; i++) {
+      fetch(recipes[i])
+      .then(response => response.json())
+      .then(data => {
+        recipeData[`recipe ${i}`] = data; 
+        if (recipes.length == Object.keys(recipeData).length) {
+          resolve("true")
+        }
+      })
+      .catch(error => reject("false"));
+    }
     // This function is called for you up above
     // From this function, you are going to fetch each of the recipes in the 'recipes' array above.
     // Once you have that data, store it in the 'recipeData' object. You can use whatever you like
@@ -44,7 +58,11 @@ async function fetchRecipes() {
 
     // Part 1 Expose - TODO
   });
+
+
 }
+
+
 
 function createRecipeCards() {
   // This function is called for you up above.
@@ -54,6 +72,15 @@ function createRecipeCards() {
   // show any others you've added when the user clicks on the "Show more" button.
 
   // Part 1 Expose - TODO
+  for (let i = 0; i < Object.keys(recipeData).length; i++) {
+    const recipeCard = document.createElement("recipe-card");
+    recipeCard.data = recipeData[`recipe ${i}`];
+    // console.log(recipeCard)
+    if (i >= 3) {
+      recipeCard.hidden = "true";
+    }
+    document.querySelector("main").append(recipeCard);
+  }
 }
 
 function bindShowMore() {
@@ -65,4 +92,16 @@ function bindShowMore() {
   // in the recipeData object where you stored them/
 
   // Part 2 Explore - TODO
+  document.querySelector("button").addEventListener("click", showMore => {
+    for (let i = 0; i < recipes.length; i++) {
+      if (i >= 3) {
+        var x = document.querySelectorAll("recipe-card")[i];
+        if (x.style.display === "none") {
+          x.style.display = "block";
+        } else {
+          x.style.display = "none";
+        }
+      }
+    }
+  });
 }
